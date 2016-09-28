@@ -1,0 +1,43 @@
+package org.rcsb.structures.utils;
+
+import java.util.Arrays;
+
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.rcsb.mmtf.spark.data.StructureDataRDD;
+
+import scala.Tuple2;
+
+/**
+ * This class converts a reduced MMTF Hadoop sequence file 
+ * to a Hadoop sequence file of protein chains (as WritableSegments).
+ * 
+ * @author Peter Rose
+ *
+ */
+public class ReducedStructuresToChains {
+
+	public static void main(String[] args) {
+		
+		float maxResolution = 3.0f;
+		float maxRfree = 0.3f;
+		int minChainLength = 10;
+		
+		long start = System.nanoTime();
+		
+		String dataPath = "/pdb/reduced";
+		String outPath = "/pdb/x-rayChains.seq";
+		
+		new StructureDataRDD(dataPath)
+	    .filterResolution(maxResolution)
+		.filterRfree(maxRfree)
+		.getJavaRdd()
+		.filter(t -> Arrays.asList(t._2.getExperimentalMethods()).contains("X-RAY DIFFRACTION")) // x-ray structures only
+		.flatMapToPair(new GappedSegmentGenerator(minChainLength)) // extract protein chains including gaps (missing atoms)
+		.mapToPair(t -> new Tuple2<Text, WritableSegment>(new Text(t._1), t._2)) // convert to Text key value
+		.saveAsHadoopFile(outPath, Text.class, WritableSegment.class, SequenceFileOutputFormat.class);
+
+		long end = System.nanoTime();
+		System.out.println("Time: " + (end-start)/1E9);
+	}
+}

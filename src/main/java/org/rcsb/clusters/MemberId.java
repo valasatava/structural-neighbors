@@ -41,14 +41,17 @@ public class MemberId {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((chainId == null) ? 0 : chainId.hashCode());
+		result = prime * result + ((pdbCode == null) ? 0 : pdbCode.hashCode());
+		return result;
+	}
 
-		MemberId memberId = (MemberId) o;
-		System.out.println(memberId.pdbCode);
-		
-		if ((pdbCode.equals("1IRU")) || (memberId.pdbCode).equals("1IRU"))
-			System.out.println("Found!"+memberId.pdbCode);
-		
+	@Override
+	public boolean equals(Object o) {
+		MemberId memberId = (MemberId) o;	
 		return pdbCode.equals(memberId.pdbCode) && chainId.equals(memberId.chainId);
 	}
 }

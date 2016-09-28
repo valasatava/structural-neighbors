@@ -1,4 +1,4 @@
-package org.rcsb.sequences.utils;
+package org.rcsb.sequences;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

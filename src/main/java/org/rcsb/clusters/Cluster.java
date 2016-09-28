@@ -33,4 +33,11 @@ public class Cluster {
 	public void addMember(MemberId member) {
 		members.add(member);
 	}
+	
+	public Set<MemberId> retainAll(Set<MemberId> entries) {
+		
+		Set<MemberId> s = new HashSet<>(entries);
+		s.retainAll(this.getMembers());
+		return s;	
+	}
 }

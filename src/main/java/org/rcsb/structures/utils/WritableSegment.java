@@ -18,7 +18,10 @@ import org.apache.hadoop.io.Writable;
  *
  */
 public class WritableSegment implements Writable, Serializable {
+	
 	private static final long serialVersionUID = 6036726463051044340L;
+	
+	private String id;
 	private String sequence;
 	private Point3d[] structure;
 
@@ -27,24 +30,36 @@ public class WritableSegment implements Writable, Serializable {
 	}
 	/**
 	 * Constructor for the {@link Segment} object.
+	 * @param sequence the {@link String} id of the object
 	 * @param sequence the {@link String} sequence of the object
 	 * @param structure the {@link Point3d} array of the structure of the object
 	 */
-	public WritableSegment(String sequence, Point3d[] structure) {
+	public WritableSegment(String id, String sequence, Point3d[] structure) {
+		this.id = id;
 		this.sequence = sequence;
 		this.structure = structure;
 	}
 	
 	/**
 	 * Constructor for the {@link Segment} object.
+	 * @param sequence the {@link String} id of the object
 	 * @param sequence the {@link String} sequence of the object
 	 * @param structure the {@link Point3d} array of the structure of the object
 	 */
 	public WritableSegment(WritableSegment segment) {
+		this.id = segment.id;
 		this.sequence = segment.sequence;
 		this.structure = segment.structure;
 	}
 
+	/**
+	 * Returns the ID of the segment.
+	 * @return the ID of this segment as one string 
+	 */
+	public String getId() {
+		return id;
+	}
+	
 	/**
 	 * Returns the sequence of the segment.
 	 * @return the sequence of this segment as one letter 
@@ -64,8 +79,13 @@ public class WritableSegment implements Writable, Serializable {
 	// TODO this only works for the reduced MMTF structures
 
 	public void write(DataOutput out) throws IOException {
+		
+		out.writeInt(id.length());
+		out.write(id.getBytes());
+		
 		out.writeInt(sequence.length());
 		out.write(sequence.getBytes());
+		
 		for (Point3d p: structure) {
 			if (p == null) {
 				out.writeShort(Short.MAX_VALUE);
@@ -83,10 +103,17 @@ public class WritableSegment implements Writable, Serializable {
 	}
 
 	public void readFields(DataInput in) throws IOException {
+		
+		int lId = in.readInt();
+		byte[] bId = new byte[lId];
+		in.readFully(bId);
+		id = new String(bId);
+		
 		int length = in.readInt();
 		byte[] bytes = new byte[length];
 		in.readFully(bytes);
 		sequence = new String(bytes);
+		
 		structure = new Point3d[length];
 		for (int i = 0; i < length; i++) {
 			short x = in.readShort();

@@ -1,55 +1,33 @@
 package org.rcsb.clusters;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.rcsb.sequences.ReadBlastClusters;
-
-import com.google.common.collect.Sets;
-
 public class GroupsToStructuresBridge {
 	
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static Cluster clusterSegments(int id, Cluster cluster, Set<MemberId> entries) {
 		
-		// Blast clusters
-    	List<Cluster> clusters = new ReadBlastClusters().read("/pdb/bc-100.out.TEST");
-
-		MemberId m1 = MemberId.create("5LF3_U", "_");
-		MemberId m2 = MemberId.create("5LEX_G", "_");
-		MemberId m3 = MemberId.create("5LEY_U", "_");
-		Set<MemberId> subset = Sets.newHashSet(m1, m2, m3);
+		Set<MemberId> s = cluster.retainAll(entries);
+		if (s.isEmpty())
+			return null;
+		Cluster c = new Cluster(id);
+		c.setMembers(s);
 		
-		run(clusters, subset);
+		return c;
+		
+	}
+	public static List<Cluster> run(List<Cluster> clusters, Set<MemberId> entries) {
+		
+		// Segments clusters
+    	List<Cluster> clusteredEntries= new ArrayList<>();
     	
-	}
-	
-	public static void run(List<Cluster> clusters, Set<MemberId> subset) {
-		
-		for (Cluster cluster : clusters) {
-
-			printSet(cluster.getMembers());
+    	int j = 0;
+    	for (Cluster cluster : clusters) {
     		
-			Set<MemberId> s = new HashSet<>(subset);
-			printSet(s);
-			
-    		s.retainAll(cluster.getMembers());
-    		printSet(s);
+    		Cluster c = clusterSegments(j++, cluster, entries);
+    		clusteredEntries.add(c);
 		}
-	}
-	
-	public static void printSet(Set<MemberId> s) {
-		
-		List<String> l = new ArrayList<>();
-		Iterator<MemberId> i = s.iterator();
-		while (i.hasNext()) {
-			MemberId m = i.next();
-			l.add(m.getPdbCode()+"_"+m.getChainId());
-		}
-		System.out.println(String.join(" ", l));
+    	return clusteredEntries;
 	}
 }

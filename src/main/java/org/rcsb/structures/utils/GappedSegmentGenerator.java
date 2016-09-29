@@ -86,7 +86,7 @@ public class GappedSegmentGenerator implements PairFlatMapFunction<Tuple2<String
 			}
 
 			if (calphaCounter >= minSequenceLength) {
-				outList.add(new Tuple2<String, WritableSegment>(chainId, new WritableSegment(sequence, coords)));
+				outList.add(new Tuple2<String, WritableSegment>(chainId, new WritableSegment(t._1, sequence, coords)));
 			}
 		}
 		return outList;

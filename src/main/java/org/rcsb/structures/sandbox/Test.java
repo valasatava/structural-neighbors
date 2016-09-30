@@ -20,11 +20,11 @@ public class Test {
 		List<WritableCluster> clusters = new WritableClusterProvider(dataPath).getClusters();
 		System.out.println(clusters.size());
 		
-//		for (WritableCluster cluster : clusters) {
-//			System.out.println(cluster.getId());
-//			for (WritableSegment segment : cluster.getMembers()) {
-//				System.out.println(segment.getId());
-//			}
-//		}
+		for (WritableCluster cluster : clusters) {
+			System.out.println(cluster.getId());
+			for (WritableSegment segment : cluster.getMembers()) {
+				System.out.println(segment.getId());
+			}
+		}
 	}
 }

@@ -26,7 +26,7 @@ public class WritableClusterProvider {
 		
 		JavaPairRDD<String, WritableCluster> clusters = sc
 	    		.sequenceFile(dataPath, Text.class, WritableCluster.class)
-	    		.mapToPair(t -> new Tuple2<String, WritableCluster> (new String(t._1.toString()), t._2) );
+	    		.mapToPair(t -> new Tuple2<String, WritableCluster> (new String(t._1.toString()), new WritableCluster(t._2)) );
 		return clusters;
 	}
 	

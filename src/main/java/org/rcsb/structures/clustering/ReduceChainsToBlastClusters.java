@@ -19,7 +19,9 @@ public class ReduceChainsToBlastClusters {
     	
     	// Blast clusters sequence identity
     	String perc = "95"; 
-    	String bcPath = "/pdb/bc-clusters/bc-"+perc+".out";
+    	//String bcPath = "/pdb/bc-clusters/bc-"+perc+".out";
+    	String bcPath = "/pdb/bc-95.out.TEST";
+    	
     	List<Cluster> clusters = new ReadBlastClusters().read(bcPath);
     	
     	// Clusters of chains

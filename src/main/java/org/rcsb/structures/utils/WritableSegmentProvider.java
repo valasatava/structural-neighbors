@@ -29,7 +29,11 @@ public class WritableSegmentProvider {
 	
 	public String dataPath;
 	
-	SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SparkUtils.class.getSimpleName()); 
+	SparkConf conf = new SparkConf()
+			.setMaster("local[*]")
+			.setAppName(SparkUtils.class.getSimpleName())
+			.set("spark.driver.maxResultSize", "2g");
+	
 	JavaSparkContext sc = new JavaSparkContext(conf);
 	
 	public WritableSegmentProvider (String filePath) {
@@ -40,7 +44,8 @@ public class WritableSegmentProvider {
 		
 		JavaPairRDD<String, WritableSegment> segments = sc
 	    		.sequenceFile(dataPath, Text.class, WritableSegment.class)
-	    		.mapToPair(t -> new Tuple2<String, WritableSegment> (new String(t._1.toString()), t._2) );
+	    		.mapToPair(t -> new Tuple2<String, WritableSegment> (new String(t._1.toString()), new WritableSegment(t._2)) );
+		
 		return segments;
 	}
 	
@@ -53,6 +58,7 @@ public class WritableSegmentProvider {
 	    // send  
 	    sc.parallelize(clusters).repartition(8)
 	    		.map(new GroupSegmentsInClusters(data))
+	    		.filter(t -> t != null)
 	    		.mapToPair(t -> new Tuple2<Text, WritableCluster>(new Text(Integer.toString(t.getId())), t))
 	    		.saveAsHadoopFile(outPath, Text.class, WritableCluster.class, SequenceFileOutputFormat.class);
     	

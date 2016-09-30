@@ -18,12 +18,12 @@ public class ReduceChainsToBlastClusters {
     	long start = System.nanoTime();
     	
     	// Blast clusters sequence identity
-    	String perc = "100"; 
-    	String bcPath = "/pdb/bc-"+perc+".out.TEST";
+    	String perc = "95"; 
+    	String bcPath = "/pdb/bc-clusters/bc-"+perc+".out";
     	List<Cluster> clusters = new ReadBlastClusters().read(bcPath);
     	
     	// Clusters of chains
-    	String outPath = "/pdb/x-rayChains_bc-"+perc+"-clusters.seq";
+    	String outPath = "/pdb/x-rayChains_bc-"+perc+".seq";
     	WritableSegmentProvider provider = new WritableSegmentProvider("/pdb/x-rayChains.seq");
     	provider.reduceToBlastClusters(clusters, outPath);
     	

@@ -80,13 +80,13 @@ public class WritableSegment implements Writable, Serializable {
 
 	public void write(DataOutput out) throws IOException {
 		
-		out.writeInt(id.length());
-		out.write(id.getBytes());
+		out.writeInt(this.id.length());
+		out.write(this.id.getBytes());
 		
-		out.writeInt(sequence.length());
-		out.write(sequence.getBytes());
+		out.writeInt(this.sequence.length());
+		out.write(this.sequence.getBytes());
 		
-		for (Point3d p: structure) {
+		for (Point3d p: this.structure) {
 			if (p == null) {
 				out.writeShort(Short.MAX_VALUE);
 				out.writeShort(Short.MAX_VALUE);
@@ -107,20 +107,20 @@ public class WritableSegment implements Writable, Serializable {
 		int lId = in.readInt();
 		byte[] bId = new byte[lId];
 		in.readFully(bId);
-		id = new String(bId);
+		this.id = new String(bId);
 		
 		int length = in.readInt();
 		byte[] bytes = new byte[length];
 		in.readFully(bytes);
-		sequence = new String(bytes);
+		this.sequence = new String(bytes);
 		
-		structure = new Point3d[length];
+		this.structure = new Point3d[length];
 		for (int i = 0; i < length; i++) {
 			short x = in.readShort();
 			short y = in.readShort();
 			short z = in.readShort();
 			if (x < Short.MAX_VALUE) {
-			   structure[i] = new Point3d(x*0.1, y*0.1, z*0.1);
+				this.structure[i] = new Point3d(x*0.1, y*0.1, z*0.1);
 			} 
 		}	
 	}

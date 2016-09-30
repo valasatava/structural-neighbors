@@ -1,9 +1,12 @@
 package org.rcsb.clusters;
 
+import java.io.Serializable;
 import java.util.StringTokenizer;
 
-public class MemberId {
+public class MemberId implements Serializable {
 
+	private static final long serialVersionUID = -1389093499160900134L;
+	
 	private String pdbCode;
 	private String chainId;
 

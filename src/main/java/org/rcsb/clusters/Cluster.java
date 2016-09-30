@@ -1,9 +1,12 @@
 package org.rcsb.clusters;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Cluster {
+public class Cluster implements Serializable {
+	
+	private static final long serialVersionUID = -1844152292150244102L;
 	
 	private int id;
 	private Set<MemberId> members = new HashSet<MemberId>();

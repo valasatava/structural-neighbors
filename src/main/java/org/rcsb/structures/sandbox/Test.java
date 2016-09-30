@@ -1,15 +1,30 @@
 package org.rcsb.structures.sandbox;
 
-import org.apache.spark.api.java.JavaPairRDD;
-import org.rcsb.mmtf.api.StructureDataInterface;
-import org.rcsb.mmtf.spark.data.StructureDataRDD;
+import java.util.List;
+
+import org.rcsb.clusters.WritableCluster;
+import org.rcsb.clusters.WritableClusterProvider;
+import org.rcsb.structures.utils.WritableSegment;
+
+
 
 public class Test {
 	
 	public static void main(String[] args) {
+		test_clusters();
+	}
+	
+	public static void test_clusters() {	
 		
-		String dataPath = "/pdb/t/reduced";
-		JavaPairRDD<String, StructureDataInterface> data = new StructureDataRDD(dataPath).getJavaRdd();
-		System.out.println(data.count());
+		String dataPath = "/pdb/x-rayChains_bc-95.seq";
+		List<WritableCluster> clusters = new WritableClusterProvider(dataPath).getClusters();
+		System.out.println(clusters.size());
+		
+//		for (WritableCluster cluster : clusters) {
+//			System.out.println(cluster.getId());
+//			for (WritableSegment segment : cluster.getMembers()) {
+//				System.out.println(segment.getId());
+//			}
+//		}
 	}
 }

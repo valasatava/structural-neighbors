@@ -10,7 +10,6 @@ import org.rcsb.clusters.GroupsToStructuresBridge;
 import org.rcsb.clusters.MemberId;
 import org.rcsb.clusters.WritableCluster;
 import org.rcsb.structures.utils.WritableSegment;
-
 import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;
 
@@ -35,23 +34,27 @@ public class GroupSegmentsInClusters implements Function <Cluster, WritableClust
 				.map(t -> MemberId.create(t._1, "."))
 				.collect(Collectors.toSet());
 		
-		//TODO generate id and pass it to assign to clusters
 		Cluster clusteredSegments = GroupsToStructuresBridge.clusterSegments(cluster.getId(), cluster, segmqntIds);
+		if (clusteredSegments == null)
+			return null;
 		
 		Set<MemberId> clusterMembers = clusteredSegments.getMembers();
+
 		WritableSegment[] segments = new WritableSegment[clusterMembers.size()];
 		
 		int i=0;
 		for (MemberId m : clusterMembers) {
 			
-			segments[i] = data.getValue()
+			WritableSegment s = data.getValue()
 					.stream()
 					.filter(t -> t._1.equals(m.getPdbCode()+"."+m.getChainId()))
 					.collect(Collectors.toList())
 					.get(0)._2;
+			
+			segments[i] = new WritableSegment(s);
 			i++;
 		}
 		
-		return new WritableCluster(0, segments);
+		return new WritableCluster(cluster.getId(), segments);
 	}
 }

@@ -6,15 +6,11 @@ import java.util.Set;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.SequenceFileOutputFormat;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.broadcast.Broadcast;
 import org.rcsb.clusters.Cluster;
 import org.rcsb.clusters.MemberId;
-import org.rcsb.clusters.WritableCluster;
 import org.rcsb.mappers.GroupSegmentsInClusters;
-import org.rcsb.mmtf.spark.utils.SparkUtils;
 
 import scala.Tuple2;
 
@@ -25,35 +21,34 @@ import scala.Tuple2;
  * @author Yana Valasatava
  *
  */
-public class WritableSegmentProvider {
+public class WritableSegmentProvider extends WritableProvider {
 	
-	public String dataPath;
+	private String dataPath;
+	JavaPairRDD<String, WritableSegment> segments;
 	
-	SparkConf conf = new SparkConf()
-			.setMaster("local[*]")
-			.setAppName(SparkUtils.class.getSimpleName())
-			.set("spark.driver.maxResultSize", "2g");
-	
-	JavaSparkContext sc = new JavaSparkContext(conf);
-	
-	public WritableSegmentProvider (String filePath) {
-		this.dataPath = filePath;
+	public WritableSegmentProvider (String path) {
+		super();
+		this.dataPath = path;
 	}
-
-	private JavaPairRDD<String, WritableSegment> readSegments() {
+	
+	public void readSegments() {
 		
-		JavaPairRDD<String, WritableSegment> segments = sc
+		if (sc == null)
+			startSpark();
+		segments = sc
 	    		.sequenceFile(dataPath, Text.class, WritableSegment.class)
-	    		.mapToPair(t -> new Tuple2<String, WritableSegment> (new String(t._1.toString()), new WritableSegment(t._2)) );
-		
-		return segments;
+	    		.mapToPair(t -> new Tuple2<String, WritableSegment> (new String(t._1.toString()), new WritableSegment(t._2)) )
+	    		.cache();
 	}
 	
 	public void reduceToBlastClusters(List<Cluster> clusters, String outPath) {
 		
+		startSpark();
+		
 		// read and broadcast segment data to all nodes
-		List<Tuple2<String, WritableSegment>> segments = readSegments().collect();
-	    final Broadcast<List<Tuple2<String,WritableSegment>>> data = sc.broadcast(segments);
+		readSegments();
+		List<Tuple2<String, WritableSegment>> s = segments.collect();
+	    final Broadcast<List<Tuple2<String,WritableSegment>>> data = sc.broadcast(s);
 	    
 	    // send  
 	    sc.parallelize(clusters).repartition(8)
@@ -62,15 +57,44 @@ public class WritableSegmentProvider {
 	    		.mapToPair(t -> new Tuple2<Text, WritableCluster>(new Text(Integer.toString(t.getId())), t))
 	    		.saveAsHadoopFile(outPath, Text.class, WritableCluster.class, SequenceFileOutputFormat.class);
     	
-		sc.close();
+	    stopSpark();
 	}
 		
 	public List<String> getSegmentIds() {
 		
-		JavaPairRDD<String, WritableSegment> segments = readSegments();
+		if (sc == null) {
+			readSegments();
+		}
 		List<String> segmentIds = segments.keys().collect();
-		sc.close();
 		return segmentIds;
+	}
+	
+	public List<Tuple2<String, WritableSegment>> getSegments() {
+		
+		if (sc==null) {
+			startSpark();
+			readSegments();
+		}
+		
+		List<Tuple2<String, WritableSegment>> s = segments.collect();
+		sc.close();
+		return s;
+	}
+	
+	public WritableSegment getSegmentById(String id) {
+		
+		if (sc==null) {
+			startSpark();
+			readSegments();
+		}
+		List<Tuple2<String, WritableSegment>> segment = segments
+				.filter(t->t._1.equals(id))
+				.collect();
+		
+		if (segment.size() != 1)
+			return null;
+		else
+			return segment.get(0)._2;
 	}
 	
 	public Set<MemberId> getMemberIds() {

@@ -1,17 +1,20 @@
-package org.rcsb.structures.clustering;
+package org.rcsb.structures.sandbox;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.rcsb.clusters.Cluster;
 import org.rcsb.sequences.ReadBlastClusters;
-import org.rcsb.structures.utils.WritableSegmentProvider;
+
+import com.google.common.io.Files;
 
 /**
  *
  */
-public class ReduceChainsToBlastClusters {
+public class ReadChainsInBlastClusters {
 	
     public static void main( String[] args ) throws FileNotFoundException, IOException {
     	
@@ -20,14 +23,13 @@ public class ReduceChainsToBlastClusters {
     	// Blast clusters sequence identity
     	String perc = "95"; 
     	String bcPath = "/pdb/bc-clusters/bc-"+perc+".out";
-    	//String bcPath = "/pdb/bc-95.out.TEST";
-    	
+
     	List<Cluster> clusters = new ReadBlastClusters().read(bcPath);
     	
-    	// Clusters of chains
-    	String outPath = "/pdb/x-rayChains_bc-"+perc+".seq";
-    	WritableSegmentProvider provider = new WritableSegmentProvider("/pdb/x-rayChains.seq");
-    	provider.reduceToBlastClusters(clusters, outPath);
+    	File f = new File("/pdb/bc-"+perc+".stats");
+    	for (Cluster cluster : clusters) {
+    		Files.append(Integer.toString(cluster.getId())+","+Integer.toString(cluster.getSize())+"\n", f, Charset.defaultCharset());
+		}
     	
     	long end = System.nanoTime();
 		System.out.println("Time: " + (end-start)/1E9);

@@ -79,13 +79,38 @@ public class LongestCommonSubsequence {
 		
 		return answer;
 	}
+	
+	public int[][] alignSequences() {
+		
+		String common = this.find();
 
+		int[][] inds = new int[common.length()][2];
+
+		int j = 0; int k = 0;
+		int ind1 = 0; int ind2 = 0;
+		for (int i = 0; i < common.length(); i++){
+
+			char aa = common.charAt(i);
+
+			while ( this.getFirstString()[j] != aa ) { 
+				j++; ind1=j; 
+			}
+			while ( this.getSecondString()[k] != aa ) { 
+				k++; ind2=k;
+			}
+
+			inds[i][0] = ind1; inds[i][1] = ind2;
+			ind1++; ind2++;
+		}
+		return inds;
+	}
+	
 	public static void main(String[] args) {
 		
-		String A = "ACBDEA";
-		String B = "ABCDA";
+		String A = "AREGLAK";
+		String B = "LAPREGK";
 		
 		LongestCommonSubsequence lcs = new LongestCommonSubsequence(A, B);
-		System.out.println("LCS :" + lcs.find());
+		System.out.println("LCS : " + lcs.find());
 	}
 }

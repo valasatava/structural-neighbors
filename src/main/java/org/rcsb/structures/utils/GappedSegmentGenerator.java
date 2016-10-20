@@ -49,7 +49,9 @@ public class GappedSegmentGenerator implements PairFlatMapFunction<Tuple2<String
 
 		// loop through chains
 		for (int i = 0; i < structureDataInterface.getNumChains(); i++) {
-			String chainId = pdbId + "." + structureDataInterface.getChainIds()[i];
+			
+			//String chainId = pdbId + "." + structureDataInterface.getChainIds()[i]; // asym_id
+			String chainId = pdbId + "." + structureDataInterface.getChainNames()[i]; // public chain id
 
 			Point3d[] coords = null;
 			String sequence = null;

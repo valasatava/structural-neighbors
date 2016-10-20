@@ -8,7 +8,7 @@ import org.apache.spark.broadcast.Broadcast;
 import org.rcsb.clusters.Cluster;
 import org.rcsb.clusters.GroupsToStructuresBridge;
 import org.rcsb.clusters.MemberId;
-import org.rcsb.clusters.WritableCluster;
+import org.rcsb.structures.utils.WritableCluster;
 import org.rcsb.structures.utils.WritableSegment;
 import org.apache.spark.api.java.function.Function;
 import scala.Tuple2;

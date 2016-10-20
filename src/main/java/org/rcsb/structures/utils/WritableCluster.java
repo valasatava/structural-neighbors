@@ -1,4 +1,4 @@
-package org.rcsb.clusters;
+package org.rcsb.structures.utils;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -8,7 +8,6 @@ import java.io.Serializable;
 import javax.vecmath.Point3d;
 
 import org.apache.hadoop.io.Writable;
-import org.rcsb.structures.utils.WritableSegment;
 
 /**
  * Simple data structure for clusters of writable segments that can be

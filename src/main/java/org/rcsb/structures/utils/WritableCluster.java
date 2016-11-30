@@ -17,15 +17,12 @@ import org.apache.hadoop.io.Writable;
  *
  */
 public class WritableCluster implements Writable, Serializable {
-	
-	private static final long serialVersionUID = 8160857785236516943L;
-	
+
 	private int id;
 	private WritableSegment[] members;
-
-	public WritableCluster() {
-		
-	}
+	private static final long serialVersionUID = 8160857785236516943L;
+	public WritableCluster(){};
+	
 	/**
 	 * Constructor for the {@link Segment} object.
 	 * @param sequence the {@link String} id of the object
@@ -33,7 +30,6 @@ public class WritableCluster implements Writable, Serializable {
 	 * @param structure the {@link Point3d} array of the structure of the object
 	 */
 	public WritableCluster(int id, WritableSegment[] members) {
-		
 		this.id = id;
 		this.members = members;
 	}
@@ -55,6 +51,14 @@ public class WritableCluster implements Writable, Serializable {
 	 */
 	public int getId() {
 		return id;
+	}
+	
+	public String[] getMembersId() {
+		String[] ids = new String[members.length];
+		for ( int i=0;i<members.length; i++ ) {
+			ids[i] = members[i].getId();
+		}
+		return ids;
 	}
 	
 	/**

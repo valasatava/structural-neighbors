@@ -166,7 +166,7 @@ public class WritableSegmentSuperposer {
 		return clone;
 	}
 	
-	public void run() {
+	public float[] run() {
 		
 		int[][] alignedInds = alignSequences();
 		int[][] alignment = refineSequenceAlignment(alignedInds);
@@ -174,15 +174,11 @@ public class WritableSegmentSuperposer {
 		Tuple2<Point3d[], Point3d[]> coordinates = getAlignedCoordinates(alignment);
 		Point3d[] superposed = superposeCoordinates( coordinates._1, coordinates._2 );
 		
-		double rmsd = SuperPosition.rmsd(coordinates._2, superposed);
+		float rmsd = (float) SuperPosition.rmsd(coordinates._2, superposed);
+		int lengthNative = Math.min(this.firstSegment.getSequence().length(), this.secondSegment.getSequence().length());
+		float tmScore = (float) SuperPosition.TMScore(coordinates._2, superposed, lengthNative);
 		
-		System.out.println("RMSD: " + rmsd);
-		System.out.println("Coverage of the 1st segment: " + ((superposed.length/(float)this.getFirstSegment().getCoordinates().length)*100) + " %");
-		System.out.println("Coverage of the 2nd segment: " + ((superposed.length/(float)this.getSecondSegment().getCoordinates().length)*100) + " %");
-		
-		//Matrix4d tm = getTransformation(coordinates._1, coordinates._2);
-		//Point3d[] superposed = applyTransformation(tm, this.getSecondSegment().getCoordinates());
-		//Point3d[] target = this.getFirstSegment().getCoordinates();
-
+		float[] scores = {rmsd, tmScore};
+		return scores;
 	}
 }

@@ -56,7 +56,6 @@ public class WritableSegmentProvider extends WritableProvider {
 	    		.filter(t -> t != null)
 	    		.mapToPair(t -> new Tuple2<Text, WritableCluster>(new Text(Integer.toString(t.getId())), t))
 	    		.saveAsHadoopFile(outPath, Text.class, WritableCluster.class, SequenceFileOutputFormat.class);
-    	
 	    stopSpark();
 	}
 		

@@ -17,19 +17,32 @@ public class WritableClusterProvider extends WritableProvider {
 	
 	private JavaPairRDD<String, WritableCluster> readClusters() {
 		
+		if (sc==null)
+			startSpark();
 		JavaPairRDD<String, WritableCluster> clusters = sc
 	    		.sequenceFile(dataPath, Text.class, WritableCluster.class)
-	    		.mapToPair(t -> new Tuple2<String, WritableCluster> (new String(t._1.toString()), new WritableCluster(t._2)) );
+	    		.mapToPair(t -> new Tuple2<String, WritableCluster> (new String(t._1.toString()), 
+	    				new WritableCluster(t._2)) );
 		return clusters;
 	}
 	
 	public List<WritableCluster> getClusters() {
-		
 		List<WritableCluster> clusters = readClusters()
 				.collect()
 				.stream()
 				.map(t -> t._2)
 				.collect(Collectors.toList());
 		return clusters;
+	}
+	
+	public WritableCluster getClusterById(int id) {
+		
+		List<WritableCluster> clusters = getClusters();
+		for (WritableCluster cluster : clusters) {
+			if (cluster.getId()==id) {
+				return cluster;
+			}
+		}
+		return null;
 	}
 }

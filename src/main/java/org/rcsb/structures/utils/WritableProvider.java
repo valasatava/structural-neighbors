@@ -18,4 +18,8 @@ public class WritableProvider {
 	public void stopSpark() {
 		sc.close();
 	}
+	
+	public JavaSparkContext getSparkContext() {
+		return sc;
+	}
 }

@@ -76,16 +76,6 @@ public class LongestCommonSubsequence {
 			}
 			x = solution[a][b];
 		}
-		
 		return answer;
-	}
-
-	public static void main(String[] args) {
-		
-		String A = "ACBDEA";
-		String B = "ABCDA";
-		
-		LongestCommonSubsequence lcs = new LongestCommonSubsequence(A, B);
-		System.out.println("LCS :" + lcs.find());
 	}
 }

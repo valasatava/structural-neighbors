@@ -56,7 +56,7 @@ public class WritableSegmentProvider {
 	    final Broadcast<List<Tuple2<String,WritableSegment>>> data = sc.broadcast(segments);
 	    
 	    // send  
-	    sc.parallelize(clusters).repartition(8)
+	    sc.parallelize(clusters).repartition(4)
 	    		.map(new GroupSegmentsInClusters(data))
 	    		.filter(t -> t != null)
 	    		.mapToPair(t -> new Tuple2<Text, WritableCluster>(new Text(Integer.toString(t.getId())), t))

@@ -15,7 +15,10 @@ public class WritableClusterProvider {
 	
 	public String dataPath;
 	
-	SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SparkUtils.class.getSimpleName()); 
+	SparkConf conf = new SparkConf()
+			.setMaster("local[*]")
+			.set("spark.driver.maxResultSize", "8g")
+			.setAppName(SparkUtils.class.getSimpleName()); 
 	JavaSparkContext sc = new JavaSparkContext(conf);
 	
 	public WritableClusterProvider (String filePath) {

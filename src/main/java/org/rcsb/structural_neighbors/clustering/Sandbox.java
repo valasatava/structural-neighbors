@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.rcsb.mmtf.dataholders.MmtfStructure;
+import org.rcsb.mmtf.spark.utils.SparkUtils;
 import org.rcsb.structural_neighbors.io.MmtfStructuresProvider;
 import org.rcsb.structural_neighbors.io.WritableSegmentProvider;
 import org.rcsb.structural_neighbors.structures.WritableSegment;
@@ -39,7 +40,7 @@ public class Sandbox {
 		WritableSegment[] segments = WritableSegmentProvider.getMoleculesFromMmtfStructures(structures, moleculeName);
 		
 		HierarchicalClusteringFactory cp = new HierarchicalClusteringFactory(segments);
-		cp.run();
+		cp.run(SparkUtils.getSparkContext());
 		cp.writeTree("/pdb/clustering/"+name);
 	}
 }

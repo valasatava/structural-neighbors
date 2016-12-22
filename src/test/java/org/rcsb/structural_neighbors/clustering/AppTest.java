@@ -1,4 +1,4 @@
-package org.rcsb.structures.clustering;
+package org.rcsb.structural_neighbors.clustering;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

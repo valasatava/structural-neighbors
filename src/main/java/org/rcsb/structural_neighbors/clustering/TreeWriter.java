@@ -9,21 +9,16 @@ import org.rcsb.structural_neighbors.io.MmtfStructuresProvider;
 import org.rcsb.structural_neighbors.io.WritableSegmentProvider;
 import org.rcsb.structural_neighbors.structures.WritableSegment;
 
-public class Sandbox {
+public class TreeWriter {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
 		long start = System.nanoTime();
 
-		//testClustering();
 		writeTree();
 		
 		long end = System.nanoTime();
 		System.out.println("Time: " + ((end-start)/1E9)+"(sec)");
-	}
-	
-	public static void testClustering() throws ClassNotFoundException, IOException {
-
 	}
 	
 	public static void writeTree() throws ClassNotFoundException, IOException {

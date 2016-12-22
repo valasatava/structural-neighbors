@@ -26,6 +26,8 @@ public class Clustering {
 	
 	public static void run() throws FileNotFoundException, IOException {
 		
+		long start = System.nanoTime();
+		
 		String perc = "95";
 		String bcPath = "/pdb/bc-clusters/bc-"+perc+".out";		
 		List<WritableCluster> seqClusters = ReduceChainsToGroups.groupChains(bcPath);
@@ -46,5 +48,8 @@ public class Clustering {
             }
 		}
         sc.stop();
+        
+        long end = System.nanoTime();
+		System.out.println("Time: " + ((end-start)/1E9)+"(sec)");
 	}  
 }

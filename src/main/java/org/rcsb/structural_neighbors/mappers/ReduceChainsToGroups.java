@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.structural_neighbors.io.ClustersReader;
 import org.rcsb.structural_neighbors.io.WritableClusterProvider;
 import org.rcsb.structural_neighbors.io.WritableSegmentProvider;
@@ -40,8 +42,14 @@ public class ReduceChainsToGroups {
     
     public static List<WritableCluster> groupChains(String bcPath) throws FileNotFoundException, IOException {
 		
+    	SparkConf conf = new SparkConf()
+    			.setMaster("local[*]")
+    			.set("spark.driver.maxResultSize", "8g")
+    			.setAppName("WritableSegmentProvider");
+    	JavaSparkContext sc = new JavaSparkContext(conf);
+    	
     	String dataPath = "/pdb/x-rayChains.seq";
-		WritableSegment[] data = WritableSegmentProvider.getFromHadoop(dataPath);
+		WritableSegment[] data = WritableSegmentProvider.getFromHadoop(sc, dataPath);
 		Map<String, WritableSegment> proteins = Convertors.arrayToMap(data);
 		
 		int cluserId = 0;

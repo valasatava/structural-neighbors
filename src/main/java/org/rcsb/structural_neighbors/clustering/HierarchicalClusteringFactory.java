@@ -24,10 +24,10 @@ import loschmidt.clustering.api.Cluster;
 import loschmidt.clustering.api.ClusterFactory;
 import loschmidt.clustering.api.Clusters;
 import loschmidt.clustering.hierarchical.CompleteLinkage;
-import loschmidt.clustering.hierarchical.Merge;
 import loschmidt.clustering.hierarchical.Tree;
 import loschmidt.clustering.hierarchical.murtagh.Murtagh;
 import loschmidt.clustering.hierarchical.murtagh.MurtaghParams;
+import loschmidt.clustering.io.MCUPGMATreeWriter;
 
 public class HierarchicalClusteringFactory {
 	
@@ -102,10 +102,14 @@ public class HierarchicalClusteringFactory {
 		Files.append("CID\tCID\tDistance\tMID\n", ft, Charset.defaultCharset());
 		Murtagh a = new Murtagh(getSimilarityMatrix(), getPatameters());
 		Tree tree = a.contructTree();
-		tree.generateMergeIDs();
-		for (Merge m : tree.getMerges()) {
-			Files.append(String.format("%d\t%d\t%f\t%d", (m.getX() + 1), (m.getY() + 1), m.getDistance(), (m.getID() + 1))+"\n", ft, Charset.defaultCharset());
-		}
+		
+//		tree.generateMergeIDs();
+//		for (Merge m : tree.getMerges()) {
+//			Files.append(String.format("%d\t%d\t%f\t%d", (m.getX() + 1), (m.getY() + 1), m.getDistance(), (m.getID() + 1))+"\n", ft, Charset.defaultCharset());
+//		}
+//		
+		MCUPGMATreeWriter treeWriter = new MCUPGMATreeWriter();
+		treeWriter.write(tree, ft);
 	}
 	
 	private WritableSegment selectRepresentative(Cluster<Integer> cluster) {

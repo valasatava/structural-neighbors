@@ -7,7 +7,6 @@ import java.util.List;
 import javax.vecmath.Point3d;
 
 import org.apache.hadoop.io.Text;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.codec.StringCodecs;
 import org.rcsb.mmtf.dataholders.Entity;
@@ -23,13 +22,7 @@ import scala.Tuple2;
  *
  */
 public class WritableSegmentProvider {
-		
-	static SparkConf conf = new SparkConf()
-			.setMaster("local[*]")
-			.set("spark.driver.maxResultSize", "8g")
-			.setAppName("WritableSegmentProvider");
-	private static JavaSparkContext sc = new JavaSparkContext(conf);
-	
+			
 	public static WritableSegment[] getMoleculesFromMmtfStructures(List<MmtfStructure> structures, String moleculeName) throws IOException {
 
 		List<WritableSegment> segments = new ArrayList<WritableSegment>();
@@ -54,7 +47,7 @@ public class WritableSegmentProvider {
 		return array;
 	}
 	
-	public static WritableSegment[] getFromHadoop(String path) {
+	public static WritableSegment[] getFromHadoop(JavaSparkContext sc, String path) {
 
 		List<Tuple2<String, WritableSegment>> data = sc.sequenceFile(path, Text.class, WritableSegment.class)
 		.mapToPair(t -> new Tuple2<String, WritableSegment> (new String(t._1.toString()), 

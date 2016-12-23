@@ -9,7 +9,7 @@ import org.rcsb.structural_neighbors.io.MmtfStructuresProvider;
 import org.rcsb.structural_neighbors.io.WritableSegmentProvider;
 import org.rcsb.structural_neighbors.structures.WritableSegment;
 
-public class TreeWriter {
+public class WritingHierarchicalTree {
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
@@ -29,13 +29,13 @@ public class TreeWriter {
 		
 		// Get MMTF structures
 		MmtfStructuresProvider mp = new MmtfStructuresProvider("http://mmtf.rcsb.org/v1.0/reduced/");
-		List<MmtfStructure> structures = mp.getListedInFile("/pdb/clustering/data/"+name+".csv");
+		List<MmtfStructure> structures = mp.getListedInFile("/pdb/kinases_clustering/data/"+name+".csv");
 		
 		String moleculeName = "kinase";
 		WritableSegment[] segments = WritableSegmentProvider.getMoleculesFromMmtfStructures(structures, moleculeName);
 		
 		HierarchicalClusteringFactory cp = new HierarchicalClusteringFactory(segments);
 		cp.run(SparkUtils.getSparkContext());
-		cp.writeTree("/pdb/clustering/"+name);
+		cp.writeTree("/pdb/kinases_clustering/"+name);
 	}
 }
